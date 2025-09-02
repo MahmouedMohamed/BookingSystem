@@ -3,6 +3,7 @@
 namespace App\Modules\Users\Models;
 
 use App\Exceptions\ModelNotFoundException;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -67,5 +68,10 @@ class User extends Authenticatable
             $q->where('name', 'like', "%{$searchKey}%")
                 ->orWhere('email', 'like', "%{$searchKey}%");
         });
+    }
+
+    protected static function newFactory()
+    {
+        return UserFactory::new();
     }
 }
