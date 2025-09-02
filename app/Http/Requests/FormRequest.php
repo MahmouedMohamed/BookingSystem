@@ -40,7 +40,7 @@ abstract class FormRequest extends LaravelFormREquest
         }
 
         throw new HttpResponseException(
-            $this->validation($errors, 'Validation Errors')
+            $this->sendValidationResponse($errors, 'Validation Errors')
         );
     }
 }

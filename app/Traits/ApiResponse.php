@@ -12,7 +12,7 @@ trait ApiResponse
      * @param  string  $key
      * @param  int  $statusCode
      */
-    public function success($message = 'success', $data = [], $key = 'items', $statusCode = 200)
+    public function sendSuccessResponse($message = 'success', $data = [], $key = 'items', $statusCode = 200)
     {
         return response()->json([
             'code' => $statusCode,
@@ -29,7 +29,7 @@ trait ApiResponse
      * @param  int  $statusCode
      * @param  string  $customErrorCode
      */
-    public function error($message, $statusCode = 500, $customErrorCode = 0)
+    public function sendErrorResponse($message, $statusCode = 500, $customErrorCode = 0)
     {
         return response()->json([
             'code' => $statusCode,
@@ -45,7 +45,7 @@ trait ApiResponse
      *
      * @param  array  $errors
      */
-    public function validation($errors, $message = 'validation error')
+    public function sendValidationResponse($errors, $message = 'validation error')
     {
         return response()->json([
             'code' => 422,
@@ -57,15 +57,25 @@ trait ApiResponse
     }
 
     /**
-     * Send permission error response
+     * Send unauthorized error response
      */
-    public function permission()
+    public function sendUnauthorizedResponse()
     {
         return response()->json([
             'code' => 401,
             'success' => false,
-            'message' => __('app.permission_error.description'),
+            'message' => __('app.unauthorized'),
             'item' => [],
         ], 401);
+    }
+
+    public function sendPermissionErrorResponse()
+    {
+        return response()->json([
+            'code' => 403,
+            'success' => false,
+            'message' => __('app.insufficient_permissions'),
+            'item' => [],
+        ], 403);
     }
 }

@@ -13,6 +13,6 @@ class ModelNotFoundException extends Exception
 
     public function render()
     {
-        return $this->error(__('model_not_found'), 404);
+        return $this->sendErrorResponse(__('model_not_found'), 404);
     }
 }

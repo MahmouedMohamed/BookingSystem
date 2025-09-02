@@ -13,6 +13,6 @@ class LoginFailedException extends Exception
 
     public function render()
     {
-        return $this->error(__('invalid_credentials'), 401);
+        return $this->sendErrorResponse(__('invalid_credentials'), 401);
     }
 }
