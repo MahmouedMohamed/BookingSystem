@@ -5,15 +5,11 @@ namespace App\Modules\Users\Interfaces;
 use App\Modules\Users\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-interface UserRepositoryInterface
+interface UserServiceInterface
 {
     public function index($request): LengthAwarePaginator;
 
     public function store($request): User;
-
-    public function find($request, $withTrashed = false): User;
-
-    public function findByEmail($request): User;
 
     public function update($request, $user): User;
 

@@ -70,6 +70,14 @@ class User extends Authenticatable
         });
     }
 
+    /**
+     * Scope to filter by role.
+     */
+    public function scopeRole($query, string $role)
+    {
+        return $query->where('role', $role);
+    }
+
     protected static function newFactory()
     {
         return UserFactory::new();
