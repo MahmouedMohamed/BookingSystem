@@ -22,9 +22,9 @@ class AuthController
         try {
             $data = $this->authService->register($request);
 
-            return $this->success('registered_successfully', ['user' => new UserResource($data['user']), 'token' => $data['token']]);
+            return $this->sendSuccessResponse('registered_successfully', ['user' => new UserResource($data['user']), 'token' => $data['token']]);
         } catch (Exception $e) {
-            return $this->error('Failed to register: '.$e->getMessage());
+            return $this->sendErrorResponse('Failed to register: '.$e->getMessage());
         }
     }
 
@@ -33,13 +33,13 @@ class AuthController
         try {
             $data = $this->authService->login($request);
 
-            return $this->success('Login successfully', ['user' => new UserResource($data['user']), 'token' => $data['token']], 'item');
+            return $this->sendSuccessResponse('Login successfully', ['user' => new UserResource($data['user']), 'token' => $data['token']], 'item');
         } catch(ModelNotFoundException $e){ // Sometimes this is confidential info (believe it's not here)
-            return $this->error('user_not_registered_in_our_system', 404);
+            return $this->sendErrorResponse('user_not_registered_in_our_system', 404);
         } catch(LoginFailedException $e){
             throw $e;
         } catch (Exception $e) {
-            return $this->error('Failed to login: '.$e->getMessage());
+            return $this->sendErrorResponse('Failed to login: '.$e->getMessage());
         }
     }
 }
