@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Modules\Availabilities\Providers\AvailabilityServiceProvider;
 use App\Modules\Services\Providers\CategoryServiceProvider;
 use App\Modules\Services\Providers\ServiceProvider;
 use App\Modules\Users\Providers\UserServiceProvider;
@@ -17,6 +18,7 @@ class AppServiceProvider extends BaseServiceProvider
         $this->app->register(UserServiceProvider::class);
         $this->app->register(CategoryServiceProvider::class);
         $this->app->register(ServiceProvider::class);
+        $this->app->register(AvailabilityServiceProvider::class);
     }
 
     /**

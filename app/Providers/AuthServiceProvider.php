@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Modules\Availabilities\Models\Availability;
+use App\Modules\Availabilities\Policies\AvailabilityPolicy;
 use App\Modules\Services\Models\Category;
 use App\Modules\Services\Models\Service;
 use App\Modules\Services\Policies\CategoryPolicy;
@@ -16,6 +18,7 @@ class AuthServiceProvider extends ServiceProvider
         User::class => UserPolicy::class,
         Category::class => CategoryPolicy::class,
         Service::class => ServicePolicy::class,
+        Availability::class => AvailabilityPolicy::class,
     ];
 
     /**
