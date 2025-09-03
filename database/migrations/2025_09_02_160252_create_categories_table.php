@@ -11,15 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('services', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('provider_id')->references('id')->on('users');
             $table->string('name');
-            $table->longText('description')->nullable();
-            $table->foreignId('category_id')->references('id')->on('categories');
-            $table->integer('duration')->comment('IN Minutes');
-            $table->decimal('price');
-            $table->boolean('is_published')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('services');
+        Schema::dropIfExists('categories');
     }
 };
