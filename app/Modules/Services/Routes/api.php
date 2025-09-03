@@ -9,4 +9,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('categories')->group(function () {
         Route::patch('{id}/restore', [CategoryController::class, 'restore']);
     });
+    Route::apiResource('services', ServiceController::class);
+    Route::prefix('services')->group(function () {
+        Route::patch('{id}/restore', [ServiceController::class, 'restore']);
+    });
 });
