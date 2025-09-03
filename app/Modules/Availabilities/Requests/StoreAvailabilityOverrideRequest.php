@@ -2,6 +2,8 @@
 
 namespace App\Modules\Availabilities\Requests;
 
+use App\Modules\Availabilities\Rules\AvailabilityOverrideConflict;
+use App\Modules\Availabilities\Rules\AvailabilityOverrideRule;
 use Illuminate\Validation\Rule;
 
 class StoreAvailabilityOverrideRequest extends BaseAvailabilityOverrideRequest
@@ -14,6 +16,8 @@ class StoreAvailabilityOverrideRequest extends BaseAvailabilityOverrideRequest
     public function rules(): array
     {
         $provider = $this->route('provider');
+        $start= $this->input('start');
+        $end= $this->input('end');
 
         return [
             // Either date OR weekday must be provided, but not both
@@ -24,26 +28,45 @@ Else If I want to override weekday then I can specify if it's gonna be repeated 
              */
             'date' => [
                 'sometimes',
+                'nullable',
                 'required_without:weekday',
                 'date',
                 'after_or_equal:today',
-                $this->getTimeConflictRule($provider->id, 'date')
+                new AvailabilityOverrideRule(
+                    $provider->id,
+                    $this->input('weekday'),
+                    $this->input('date_start'),
+                    $this->input('start'),
+                    $this->input('end'),
+                    'date',
+                ),
+                new AvailabilityOverrideConflict($provider->id, 'date', $start, $end)
             ],
             // Sunday => 0 ... Saturday => 6
             'weekday' => [
                 'sometimes',
+            'nullable',
                 'required_without:date',
                 'integer',
                 'min:0',
                 'max:6',
-                $this->getTimeConflictRule($provider->id, 'weekday')
+                new AvailabilityOverrideRule(
+                    $provider->id,
+                    $this->input('weekday'),
+                    $this->input('date_start'),
+                    $this->input('start'),
+                    $this->input('end'),
+                    'weekday',
+                ),
+                new AvailabilityOverrideConflict($provider->id, 'weekday', $start, $end)
             ],
-            'date_start' => 'required_with:weekday|date|after_or_equal:today',
+            'date_start' => 'required_with:weekday|nullable|date|after_or_equal:today',
             'start' => 'required|date_format:H:i',
             'end' => 'required|date_format:H:i|after:start',
-            'recurring' => 'sometimes|boolean',
+            'recurring' => 'sometimes|boolean|nullable',
             'number_of_recurring' => [
                 'sometimes',
+                'nullable',
                 'integer',
                 'min:0',
                 'max:52',

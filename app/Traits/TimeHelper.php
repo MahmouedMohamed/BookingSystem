@@ -6,12 +6,16 @@ use Carbon\Carbon;
 
 trait TimeHelper
 {
-    private function calculateNextWeekday($dateStart, $currentWeekDay)
+    private function getWeekDay($date)
+    {
+        return Carbon::parse($date)->dayOfWeek;
+    }
+
+    private function calculateNextWeekday($dateStart, $targetWeekday)
     {
         // Calculate the first occurrence of the weekday from date_start
-        $dateStart = Carbon::parse($dateStart);
-        $targetWeekday = $currentWeekDay;
-        $currentWeekday = $dateStart->dayOfWeek;
+        $startDate = Carbon::parse($dateStart);
+        $currentWeekday = $startDate->dayOfWeek;
 
         // Calculate days to add to reach the target weekday
         /**
@@ -27,6 +31,6 @@ trait TimeHelper
         }
 
         // Store the actual first date of the weekday in the date field
-        return $dateStart->addDays($daysToAdd)->format('Y-m-d');
+        return $startDate->addDays($daysToAdd)->format('Y-m-d');
     }
 }

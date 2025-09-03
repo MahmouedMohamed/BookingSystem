@@ -32,6 +32,8 @@ class AvailabilityOverrideRepository implements AvailabilityOverrideRepositoryIn
 
         if(isset($data['weekday']) && isset($data['date_start'])) {
             $data['date'] = $this->calculateNextWeekday($data['date_start'], $data['weekday']);
+        } else {
+            $data['weekday'] = $this->getWeekDay($data['date']);
         }
 
         return AvailabilityOverride::create($data);
@@ -40,6 +42,12 @@ class AvailabilityOverrideRepository implements AvailabilityOverrideRepositoryIn
     public function update($request, $availability): AvailabilityOverride
     {
         $data = $request->validated();
+
+        if(isset($data['weekday']) && isset($data['date_start'])) {
+            $data['date'] = $this->calculateNextWeekday($data['date_start'], $data['weekday']);
+        } else {
+            $data['weekday'] = $this->getWeekDay($data['date']);
+        }
 
         $availability->update($data);
 
