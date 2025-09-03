@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('provider_availability_overrides', function (Blueprint $table) {
             $table->id();
             $table->foreignId('provider_id')->references('id')->on('users');
-            $table->tinyInteger('weekday');
+            $table->dateTime('date')->nullable();
+            $table->tinyInteger('weekday')->nullable();
             $table->time('start')->nullable();
             $table->time('end')->nullable();
             $table->timestamps();
