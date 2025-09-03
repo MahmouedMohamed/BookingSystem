@@ -18,12 +18,11 @@ class UsersSeeder extends Seeder
         $roles = ['admin', 'provider', 'customer'];
         foreach ($roles as $key => $role) {
             User::factory()->create([
-            'name' => Str::ucfirst($role). ' User',
-            'email' => $role.'@booking-system.com',
-            'password' => Hash::make('12345678'),
-            'role' => $role
-        ]);
+                'name' => Str::ucfirst($role). ' User',
+                'email' => $role.'@booking-system.com',
+                'password' => Hash::make('12345678'),
+                'role' => $role
+            ]);
         }
-
     }
 }

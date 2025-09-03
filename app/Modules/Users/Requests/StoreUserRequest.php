@@ -36,6 +36,7 @@ class StoreUserRequest extends FormRequest
             ],
             'password' => 'required|string|min:8|max:255',
             'role' => 'required|string|in:admin,provider,customer',
+            'timezone' => 'sometimes|numeric|min:-12|max:12'
         ];
     }
 }

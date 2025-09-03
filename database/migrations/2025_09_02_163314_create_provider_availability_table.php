@@ -17,7 +17,6 @@ return new class extends Migration
             $table->tinyInteger('weekday');
             $table->time('start');
             $table->time('end');
-            $table->string('timezone')->default('UTC');
             $table->timestamps();
         });
     }
