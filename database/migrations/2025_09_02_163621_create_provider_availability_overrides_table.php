@@ -14,8 +14,13 @@ return new class extends Migration
         Schema::create('provider_availabilities_overrides', function (Blueprint $table) {
             $table->id();
             $table->foreignId('provider_id')->references('id')->on('users');
-            $table->dateTime('date')->nullable();
+            $table->date('date')->nullable();
             $table->tinyInteger('weekday')->nullable();
+            // Is this block gonna happen again? (only with weekday)
+            // Number of times would it happens again (only with weekday)
+            // Ex. Block next 3 mondays from 10:00 to 12:00
+            $table->boolean('recurring')->default(false);
+            $table->integer('number_of_recurring')->default(0);
             $table->time('start')->nullable();
             $table->time('end')->nullable();
             $table->timestamps();

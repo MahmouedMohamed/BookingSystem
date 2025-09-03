@@ -26,7 +26,7 @@ class UpdateAvailabilityRequest extends FormRequest
         $availability = $this->route('availability');
 
         return [
-            // Saturday => 0 ... Friday => 0
+            // Sunday => 0 ... Saturday => 6
             'weekday' => [
                 'required',
                 'integer',

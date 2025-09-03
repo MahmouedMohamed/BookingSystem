@@ -25,7 +25,7 @@ class StoreAvailabilityRequest extends FormRequest
         $provider = $this->route('provider');
 
         return [
-            // Saturday => 0 ... Friday => 0
+            // Sunday => 0 ... Saturday => 6
             'weekday' => [
                 'required',
                 'integer',
