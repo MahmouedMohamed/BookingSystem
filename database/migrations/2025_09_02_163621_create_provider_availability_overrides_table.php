@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('provider_availability_overrides', function (Blueprint $table) {
+        Schema::create('provider_availabilities_overrides', function (Blueprint $table) {
             $table->id();
             $table->foreignId('provider_id')->references('id')->on('users');
             $table->dateTime('date')->nullable();
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('provider_availability_overrides');
+        Schema::dropIfExists('provider_availabilities_overrides');
     }
 };
