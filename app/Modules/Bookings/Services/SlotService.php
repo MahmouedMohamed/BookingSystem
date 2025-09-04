@@ -21,7 +21,7 @@ class SlotService implements SlotServiceInterface
 
     public function __construct() {}
 
-    public function index($request, $provider, $service): Collection
+    public function index($provider, $service): Collection
     {
         if (!$service->is_published || $service->provider_id !== $provider->id) {
             throw new InvalidServiceException();
@@ -71,10 +71,11 @@ class SlotService implements SlotServiceInterface
 
                 $bookings = Booking::where('service_id', $service->id)
                     ->whereBetween('start_date', [$from, $to])
-                    ->get(['start_date'])
+                    ->whereIn('status', ['PENDING', 'CONFIRMED'])
+                    ->get(['start_date', 'end_date'])
                     ->map(fn($booking) => [
                         'start' => Carbon::parse($booking->start_date)->setTimezone($providerTimezone),
-                        'end' => Carbon::parse($booking->start_date)->setTimezone($providerTimezone),
+                        'end' => Carbon::parse($booking->end_date)->setTimezone($providerTimezone),
                     ]);
 
                 $slots = collect();
