@@ -64,7 +64,7 @@ class Booking extends Model
 
     public function provider()
     {
-        return $this->belongsTo(Service::class, 'provider_id');
+        return $this->belongsTo(User::class, 'provider_id');
     }
 
     public function customer()
