@@ -9,7 +9,9 @@ use App\Modules\Bookings\Services\BookingService;
 use App\Modules\Bookings\Services\SlotService;
 use App\Modules\Bookings\Repositories\BookingRepository;
 use App\Traits\ApiResponse;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class BookingServiceProvider extends ServiceProvider
@@ -22,6 +24,8 @@ class BookingServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(SlotServiceInterface::class, SlotService::class);
+        $this->app->bind(BookingServiceInterface::class, BookingService::class);
+        $this->app->bind(BookingRepositoryInterface::class, BookingRepository::class);
     }
 
     /**
@@ -29,6 +33,12 @@ class BookingServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Rate Limiting for Bookings Endpoints
+        // I made it 10/min for debugging purpose, increase it if you want
+        RateLimiter::for('bookings', function (Request $request) {
+            return Limit::perMinute(10)->by($request->user()?->id ?: $request->ip())->response(function () {
+                return $this->sendErrorResponse('Too many booking requests. Please try again later.', 429);
+            });
+        });
     }
 }
