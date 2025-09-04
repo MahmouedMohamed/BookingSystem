@@ -3,10 +3,13 @@
 namespace App\Modules\Availabilities\Models;
 
 use App\Exceptions\ModelNotFoundException;
+use App\Modules\Availabilities\Observers\AvailabilityObserver;
 use Database\Factories\AvailabilityFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+#[ObservedBy([AvailabilityObserver::class])]
 class Availability extends Model
 {
     use HasFactory;
