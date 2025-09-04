@@ -69,7 +69,7 @@ class SlotService implements SlotServiceInterface
 
                 $availabilitiesOverridesWithRecursive = $this->calculateAvailabilitiesOverridesWithRecursive($availabilitiesOverrides, $providerTimezone, $from, $to);
 
-                $bookings = Booking::where('service_id', $service->id)
+                $bookings = Booking::where('provider_id', $provider->id)
                     ->whereBetween('start_date', [$from, $to])
                     ->whereIn('status', ['PENDING', 'CONFIRMED'])
                     ->get(['start_date', 'end_date'])
@@ -156,9 +156,17 @@ class SlotService implements SlotServiceInterface
                     'end_at' => $slotEnd->clone()->setTimezone($viewerTimezone)->toIso8601String(),
                     'date' => $slotStart->clone()->setTimezone($viewerTimezone)->toDateString(),
                 ]);
-            }
 
-            $timeCursor->addMinutes($service->duration);
+                $timeCursor->addMinutes($service->duration);
+            } else {
+                if (isset($conflictsBooking)) {
+                    $timeCursor = Carbon::parse($conflictsBooking['end'])->copy();
+                } else if (isset($conflictsOverride)) {
+                    $timeCursor = Carbon::parse($conflictsOverride['end'])->copy();
+                } else {
+                    return;
+                }
+            }
         }
     }
 }
