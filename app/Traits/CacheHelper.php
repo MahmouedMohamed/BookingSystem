@@ -40,16 +40,4 @@ trait CacheHelper
         }
         Cache::forget('slots_provider_' . $providerId . '_keys');
     }
-
-    /**
-     * Invalidate cached slots for a service
-     */
-    public function invalidateServiceSlots(int $serviceId)
-    {
-        $keys = Cache::get('slots_service_' . $serviceId . '_keys', []);
-        foreach ($keys as $key) {
-            Cache::forget($key);
-        }
-        Cache::forget('slots_service_' . $serviceId . '_keys');
-    }
 }
