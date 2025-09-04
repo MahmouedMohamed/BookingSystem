@@ -43,7 +43,7 @@ class AvailabilityController extends Controller
 
             $availability = $this->availabilityService->store($request, $provider);
 
-            return $this->sendSuccessResponse('Availability created successfully', new AvailabilityResource($availability), 'item');
+            return $this->sendSuccessResponse('Availability created successfully', new AvailabilityResource($availability), 'item', 201);
         } catch (AuthorizationException $e) {
             throw $e;
         } catch (Exception $e) {

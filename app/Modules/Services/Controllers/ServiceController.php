@@ -37,7 +37,7 @@ class ServiceController extends Controller
         try {
             $service = $this->service->store($request);
 
-            return $this->sendSuccessResponse('Service created successfully', new ServiceResource($service), 'item');
+            return $this->sendSuccessResponse('Service created successfully', new ServiceResource($service), 'item', 201);
         } catch (AuthorizationException $e) {
             throw $e;
         } catch (Exception $e) {

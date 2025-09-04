@@ -22,7 +22,7 @@ class AuthController
         try {
             $data = $this->authService->register($request);
 
-            return $this->sendSuccessResponse('registered_successfully', ['user' => new UserResource($data['user']), 'token' => $data['token']]);
+            return $this->sendSuccessResponse('registered_successfully', ['user' => new UserResource($data['user']), 'token' => $data['token']], 'items', 201);
         } catch (Exception $e) {
             return $this->sendErrorResponse('Failed to register: '.$e->getMessage());
         }

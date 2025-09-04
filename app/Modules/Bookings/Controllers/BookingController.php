@@ -40,7 +40,7 @@ class BookingController extends Controller
 
             $booking = $this->bookingService->store($request);
 
-            return $this->sendSuccessResponse('Booking created successfully', new BookingResource($booking), 'item');
+            return $this->sendSuccessResponse('Booking created successfully', new BookingResource($booking), 'item', 201);
         } catch (AuthorizationException $e) {
             throw $e;
         } catch (BookingException $e) {

@@ -42,7 +42,7 @@ class UserController extends Controller
 
             $user = $this->userService->store($request);
 
-            return $this->sendSuccessResponse('User created successfully', new UserResource($user), 'item');
+            return $this->sendSuccessResponse('User created successfully', new UserResource($user), 'item', 201);
         } catch (AuthorizationException $e) {
             throw $e;
         } catch (Exception $e) {
