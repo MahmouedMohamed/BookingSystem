@@ -26,6 +26,6 @@ class InvalidateBookingsJob implements ShouldQueue
     {
         Booking::where('service_id', $this->service->id)
             ->whereIn('status', ['PENDING', 'CONFIRMED'])
-            ->update(['status' => 'CANCELLED', 'cancelled_by_type' => 'SYSTEM', 'cancellation_reason' => 'SERVICE RELATED CHANGED']);
+            ->update(['status' => 'CANCELLED', 'cancelled_by' => null, 'cancelled_by_type' => 'SYSTEM', 'cancellation_reason' => 'SERVICE RELATED CHANGED']);
     }
 }
