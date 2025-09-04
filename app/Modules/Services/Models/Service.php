@@ -3,12 +3,15 @@
 namespace App\Modules\Services\Models;
 
 use App\Exceptions\ModelNotFoundException;
+use App\Modules\Services\Observers\ServiceObserver;
 use App\Modules\Users\Models\User;
 use Database\Factories\ServiceFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[ObservedBy([ServiceObserver::class])]
 class Service extends Model
 {
     use HasFactory, SoftDeletes;
