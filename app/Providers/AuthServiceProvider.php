@@ -6,6 +6,8 @@ use App\Modules\Availabilities\Models\Availability;
 use App\Modules\Availabilities\Models\AvailabilityOverride;
 use App\Modules\Availabilities\Policies\AvailabilityOverridePolicy;
 use App\Modules\Availabilities\Policies\AvailabilityPolicy;
+use App\Modules\Bookings\Models\Booking;
+use App\Modules\Bookings\Policies\BookingPolicy;
 use App\Modules\Services\Models\Category;
 use App\Modules\Services\Models\Service;
 use App\Modules\Services\Policies\CategoryPolicy;
@@ -22,6 +24,7 @@ class AuthServiceProvider extends ServiceProvider
         Service::class => ServicePolicy::class,
         Availability::class => AvailabilityPolicy::class,
         AvailabilityOverride::class => AvailabilityOverridePolicy::class,
+        Booking::class => BookingPolicy::class,
     ];
 
     /**

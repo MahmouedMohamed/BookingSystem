@@ -21,7 +21,7 @@ class SlotController extends Controller
     public function index(Request $request, User $provider, Service $service)
     {
         try {
-            $slots = $this->slotServiceInterface->index($request, $provider, $service);
+            $slots = $this->slotServiceInterface->index($provider, $service);
 
             return $this->sendSuccessResponse('Slots retrieved successfully', $slots);
         } catch (InvalidServiceException $e) {

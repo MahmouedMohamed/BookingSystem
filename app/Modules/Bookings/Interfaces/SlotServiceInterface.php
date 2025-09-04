@@ -6,5 +6,5 @@ use Illuminate\Support\Collection;
 
 interface SlotServiceInterface
 {
-    public function index($request, $provider, $service): Collection;
+    public function index($provider, $service): Collection;
 }
