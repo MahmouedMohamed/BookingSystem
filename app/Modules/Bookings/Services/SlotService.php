@@ -110,6 +110,12 @@ class SlotService implements SlotServiceInterface
 
         foreach ($availabilitiesOverrides as $availabilityOverride) {
             $date = Carbon::parse($availabilityOverride->date, $providerTimezone)->startOfDay();
+            $dateKey = $date->copy()->toDateString();
+            $availabilitiesOverridesWithRecursive->push([
+                'date' => $dateKey,
+                'start' => Carbon::parse($dateKey . ' ' . $availabilityOverride->start, $providerTimezone),
+                'end' => Carbon::parse($dateKey . ' ' . $availabilityOverride->end, $providerTimezone),
+            ]);
             if ($availabilityOverride->recurring) {
                 for ($index = 0; $index < $availabilityOverride->number_of_recurring; $index++) {
                     $occurrence = $date->copy()->addWeeks($index);
@@ -124,13 +130,6 @@ class SlotService implements SlotServiceInterface
                         ]);
                     }
                 }
-            } else {
-                $dateKey = $date->copy()->toDateString();
-                $availabilitiesOverridesWithRecursive->push([
-                    'date' => $dateKey,
-                    'start' => Carbon::parse($dateKey . ' ' . $availabilityOverride->start, $providerTimezone),
-                    'end' => Carbon::parse($dateKey . ' ' . $availabilityOverride->end, $providerTimezone),
-                ]);
             }
         }
 
@@ -148,7 +147,9 @@ class SlotService implements SlotServiceInterface
             // Blocked by override?
             $conflictsOverride = $blocking->first(fn($blocking) => $slotStart->lt($blocking['end']) && $slotEnd->gt($blocking['start']));
 
-            if (!$conflictsBooking && !$conflictsOverride && $slotStart->isFuture()) {
+            $nowInViewerTz = Carbon::now($viewerTimezone);
+
+            if (!$conflictsBooking && !$conflictsOverride && $slotStart->copy()->setTimezone($viewerTimezone)->gt($nowInViewerTz)) {
                 $slots->push([
                     'start_at' => $slotStart->clone()->setTimezone($viewerTimezone)->toIso8601String(),
                     'end_at' => $slotEnd->clone()->setTimezone($viewerTimezone)->toIso8601String(),
