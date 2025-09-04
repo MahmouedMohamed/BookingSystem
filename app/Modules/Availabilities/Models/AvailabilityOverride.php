@@ -3,10 +3,13 @@
 namespace App\Modules\Availabilities\Models;
 
 use App\Exceptions\ModelNotFoundException;
+use App\Modules\Availabilities\Observers\AvailabilityOverrideObserver;
 use Database\Factories\AvailabilityOverrideFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+#[ObservedBy([AvailabilityOverrideObserver::class])]
 class AvailabilityOverride extends Model
 {
     use HasFactory;
