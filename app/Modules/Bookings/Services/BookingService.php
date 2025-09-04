@@ -35,9 +35,9 @@ class BookingService implements BookingServiceInterface
         return $this->bookingRepository->store($request, $service, $slots);
     }
 
-    public function updateStatus($booking, $action): Booking
+    public function updateStatus($booking, $action, $reason = null): Booking
     {
-        return $this->bookingRepository->updateStatus($booking, $action);
+        return $this->bookingRepository->updateStatus($booking, $action, $reason);
     }
 
     public function destroy($booking): bool

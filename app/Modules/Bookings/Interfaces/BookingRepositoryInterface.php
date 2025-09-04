@@ -13,7 +13,7 @@ interface BookingRepositoryInterface
 
     public function find($id, $withTrashed = false): Booking;
 
-    public function updateStatus($booking, $action): Booking;
+    public function updateStatus($booking, $action, $reason = null): Booking;
 
     public function destroy($booking): bool;
 

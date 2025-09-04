@@ -55,7 +55,7 @@ class BookingController extends Controller
         try {
             $this->authorize('update', $booking);
 
-            $booking = $this->bookingService->updateStatus($booking, $action);
+            $booking = $this->bookingService->updateStatus($booking, $action, $request->input('reason'));
 
             return $this->sendSuccessResponse('Booking updated successfully', new BookingResource($booking), 'item');
         } catch (AuthorizationException $e) {

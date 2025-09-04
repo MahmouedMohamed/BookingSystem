@@ -32,7 +32,9 @@ class Booking extends Model
         'start_date',
         'end_date',
         'status',
+        'cancelled_by_type',
         'cancelled_by',
+        'cancellation_reason',
     ];
 
     public function resolveRouteBinding($value, $field = null)

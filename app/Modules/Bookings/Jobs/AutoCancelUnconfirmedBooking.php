@@ -24,11 +24,13 @@ class AutoCancelUnconfirmedBooking implements ShouldQueue
      */
     public function handle(): void
     {
-        if($this->booking->status != 'PENDING'){
+        if ($this->booking->status != 'PENDING') {
             return;
         }
         $this->booking->update([
-            'status' => 'CANCELLED'
+            'status' => 'CANCELLED',
+            'cancelled_by_type' => 'SYSTEM',
+            'cancellation_reason' => 'NO CONFIRMATION AND TIME PASSED',
         ]);
         $this->invalidateProviderSlots($this->booking->provider_id);
     }

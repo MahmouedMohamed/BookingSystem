@@ -36,7 +36,9 @@ class CleanBookingsCommand extends Command
         Booking::where('end_date', '<', Carbon::now())
             ->where('status', '=', 'PENDING')
             ->update([
-                'status' => 'CANCELLED'
+                'status' => 'CANCELLED',
+                'cancelled_by_type' => 'SYSTEM',
+                'cancellation_reason' => 'NO CONFIRMATION AND TIME PASSED',
             ]);
     }
 }

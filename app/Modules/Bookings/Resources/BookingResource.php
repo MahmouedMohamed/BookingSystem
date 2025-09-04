@@ -27,7 +27,9 @@ class BookingResource extends JsonResource
             'start_date' => Carbon::parse($this->start_date)->setTimezone($viewerTimezone)->format('Y-m-d H:i:s'),
             'end_date' => Carbon::parse($this->end_date)->setTimezone($viewerTimezone)->format('Y-m-d H:i:s'),
             'status' => $this->status,
+            'cancelled_by_type' => $this->cancelled_by_type,
             'cancelled_by' => $this->cancelledBy ? UserResource::make($this->cancelledBy) : null,
+            'cancellation_reason' => $this->cancellation_reason,
         ];
     }
 }

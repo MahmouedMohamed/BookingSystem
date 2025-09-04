@@ -19,7 +19,9 @@ return new class extends Migration
             $table->dateTime('start_date')->comment('IN UTC');
             $table->dateTime('end_date')->comment('IN UTC');
             $table->enum('status', ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED'])->default('PENDING');
+            $table->enum('cancelled_by_type', ['USER', 'SYSTEM'])->nullable();
             $table->foreignId('cancelled_by')->nullable()->references('id')->on('users');
+            $table->text('cancellation_reason')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
