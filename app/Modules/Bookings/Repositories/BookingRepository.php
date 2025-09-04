@@ -137,6 +137,9 @@ class BookingRepository implements BookingRepositoryInterface
     public function updateStatus($booking, $action): Booking
     {
         $newStatus = $action == 'confirm' ? 'CONFIRMED' : 'CANCELLED';
+        if(Carbon::parse($booking->start_date)->isPast()){
+            throw new BookingException('Can\'t change status for past booking', 403);
+        }
         if(!$this->canTransitionTo($newStatus, $booking->status)){
             throw new BookingException('Can\'t change status for booking', 403);
         }
