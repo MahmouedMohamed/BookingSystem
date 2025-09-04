@@ -150,7 +150,7 @@ class SlotService implements SlotServiceInterface
 
             $nowInViewerTz = Carbon::now($viewerTimezone);
 
-            if (!$conflictsBooking && !$conflictsOverride && $slotStart->copy()->setTimezone($viewerTimezone)->gt($nowInViewerTz)) {
+            if (!$conflictsBooking && !$conflictsOverride && $slotStart->copy()->setTimezone($viewerTimezone)->gte($nowInViewerTz)) {
                 $slots->push([
                     'start_at' => $slotStart->clone()->setTimezone($viewerTimezone)->toIso8601String(),
                     'end_at' => $slotEnd->clone()->setTimezone($viewerTimezone)->toIso8601String(),
@@ -164,7 +164,7 @@ class SlotService implements SlotServiceInterface
                 } else if (isset($conflictsOverride)) {
                     $timeCursor = Carbon::parse($conflictsOverride['end'])->copy();
                 } else {
-                    return;
+                    $timeCursor->addMinutes($service->duration);
                 }
             }
         }
