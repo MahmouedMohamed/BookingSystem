@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Modules\Availabilities\Providers\AvailabilityServiceProvider;
 use App\Modules\Bookings\Providers\BookingServiceProvider;
+use App\Modules\Analytics\Providers\AnalyticsServiceProvider;
 use App\Modules\Services\Providers\CategoryServiceProvider;
 use App\Modules\Services\Providers\ServiceProvider;
 use App\Modules\Users\Providers\UserServiceProvider;
@@ -21,6 +22,7 @@ class AppServiceProvider extends BaseServiceProvider
         $this->app->register(ServiceProvider::class);
         $this->app->register(AvailabilityServiceProvider::class);
         $this->app->register(BookingServiceProvider::class);
+        $this->app->register(AnalyticsServiceProvider::class);
     }
 
     /**

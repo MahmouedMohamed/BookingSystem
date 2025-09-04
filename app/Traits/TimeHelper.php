@@ -33,4 +33,14 @@ trait TimeHelper
         // Store the actual first date of the weekday in the date field
         return $startDate->addDays($daysToAdd)->format('Y-m-d');
     }
+
+    /**
+     * Convert integer timezone offset to MySQL timezone format (e.g., "+03:00", "-05:00")
+     */
+    private function getMySQLTimezoneString(int $offset): string
+    {
+        $sign = $offset >= 0 ? '+' : '-';
+        $hours = abs($offset);
+        return sprintf('%s%02d:00', $sign, $hours);
+    }
 }
