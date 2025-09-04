@@ -11,6 +11,8 @@ interface UserServiceInterface
 
     public function store($request): User;
 
+    public function find($id): User;
+
     public function update($request, $user): User;
 
     public function destroy($user): bool;
