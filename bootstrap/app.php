@@ -24,4 +24,10 @@ $app->singleton(
     App\Exceptions\Handler::class
 );
 
+
+$app->singleton(
+    Illuminate\Contracts\Console\Kernel::class,
+    App\Console\Kernel::class
+);
+
 return $app;
