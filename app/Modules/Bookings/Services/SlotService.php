@@ -1,0 +1,153 @@
+<?php
+
+namespace App\Modules\Bookings\Services;
+
+use App\Modules\Availabilities\Models\Availability;
+use App\Modules\Availabilities\Models\AvailabilityOverride;
+use App\Modules\Bookings\Interfaces\SlotServiceInterface;
+use App\Modules\Bookings\Models\Booking;
+use App\Modules\Bookings\Exceptions\InvalidServiceException;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
+use Carbon\CarbonTimeZone;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Ramsey\Uuid\Uuid;
+
+class SlotService implements SlotServiceInterface
+{
+    public function __construct() {}
+
+    public function index($request, $provider, $service): Collection
+    {
+        if (!$service->is_published || $service->provider_id !== $provider->id) {
+            throw new InvalidServiceException();
+        }
+
+        $providerTimezone = CarbonTimeZone::create($provider->timezone ?? config('app.timezone', 'UTC'));
+        $viewerTimezone = CarbonTimeZone::createFromHourOffset(Auth::user()->timezone);
+
+        $viewerDateStart = Carbon::now()->timezone($viewerTimezone);
+
+        /**
+         * this from is used in queries related to provider so we need to convert the start coming from
+         * viewer timezone to the provider timezone as we save things in database with provider timezone
+         *
+         * NOTE: This wouldn't affect if timezone of provider is +
+         * o.w it will get the previous day
+         * */
+        $from = Carbon::parse($viewerDateStart, $viewerTimezone)->setTimezone($providerTimezone)->startOfDay();
+        $days = 7; // Only Next Week
+        $to = (clone $from)->addDays($days - 1)->endOfDay();
+
+        return Cache::remember(
+            'slots_provider_' . $provider->id .
+                '_service_' . $service->id .
+                '_from_' . $from->toDateString() .
+                '_timezone_' . Auth::user()->timezone,
+            7 * 60 * 60,
+            function () use ($provider, $service, $providerTimezone, $viewerTimezone, $from, $to) {
+                $availabilities = Availability::where('provider_id', $provider->id)
+                    ->get(['weekday', 'start', 'end'])
+                    ->groupBy('weekday');
+
+                // We can't compare with from here cause some overrides may be before the start date
+                // but it still recursive
+                $availabilitiesOverrides = AvailabilityOverride::where('provider_id', $provider->id)
+                    ->whereDate('date', '<=', $to->toDateString())
+                    ->get(['date', 'start', 'end', 'recurring', 'number_of_recurring']);
+
+                $availabilitiesOverridesWithRecursive = $this->calculateAvailabilitiesOverridesWithRecursive($availabilitiesOverrides, $providerTimezone, $from, $to);
+
+                $bookings = Booking::where('service_id', $service->id)
+                    ->whereBetween('start_date', [$from, $to])
+                    ->get(['start_date'])
+                    ->map(fn($booking) => [
+                        'start' => Carbon::parse($booking->start_date)->setTimezone($providerTimezone),
+                        'end' => Carbon::parse($booking->start_date)->setTimezone($providerTimezone),
+                    ]);
+
+                $slots = collect();
+
+                foreach (CarbonPeriod::create($from, '1 day', $to) as $day) {
+                    $weekday = $day->dayOfWeek;
+                    $dateKey = $day->toDateString();
+
+                    $availabilitiesDays = $availabilities->get($weekday, collect())
+                        ->map(fn($r) => [
+                            'start' => Carbon::parse($dateKey . ' ' . $r->start, $providerTimezone),
+                            'end' => Carbon::parse($dateKey . ' ' . $r->end, $providerTimezone),
+                        ])
+                        ->values();
+
+                    $blocking = $availabilitiesOverridesWithRecursive->get($dateKey, collect());
+
+                    foreach ($availabilitiesDays as $availabilitiesDay) {
+                        $timeCursor = (clone $availabilitiesDay['start']);
+
+                        $this->getSlotsInTime($slots, $timeCursor, $service, $availabilitiesDay, $bookings, $blocking, $viewerTimezone);
+                    }
+                }
+
+                return $slots->groupBy('date');
+            }
+        );
+    }
+
+    private function calculateAvailabilitiesOverridesWithRecursive($availabilitiesOverrides, $providerTimezone, $from, $to)
+    {
+        $availabilitiesOverridesWithRecursive = collect();
+
+        foreach ($availabilitiesOverrides as $availabilityOverride) {
+            $date = Carbon::parse($availabilityOverride->date, $providerTimezone)->startOfDay();
+            if ($availabilityOverride->recurring) {
+                for ($index = 0; $index < $availabilityOverride->number_of_recurring; $index++) {
+                    $occurrence = $date->copy()->addWeeks($index);
+
+                    // only add occurrences in range
+                    if ($occurrence->between($from, $to)) {
+                        $dateKey = $occurrence->toDateString();
+                        $availabilitiesOverridesWithRecursive->push([
+                            'date' => $dateKey,
+                            'start' => Carbon::parse($dateKey . ' ' . $availabilityOverride->start, $providerTimezone),
+                            'end' => Carbon::parse($dateKey . ' ' . $availabilityOverride->end, $providerTimezone),
+                        ]);
+                    }
+                }
+            } else {
+                $dateKey = $date->copy()->toDateString();
+                $availabilitiesOverridesWithRecursive->push([
+                    'date' => $dateKey,
+                    'start' => Carbon::parse($dateKey . ' ' . $availabilityOverride->start, $providerTimezone),
+                    'end' => Carbon::parse($dateKey . ' ' . $availabilityOverride->end, $providerTimezone),
+                ]);
+            }
+        }
+
+        return $availabilitiesOverridesWithRecursive->groupBy('date');
+    }
+
+    private function getSlotsInTime(&$slots, $timeCursor, $service, $w, $bookings, $blocking, $viewerTimezone)
+    {
+        while ($timeCursor->copy()->addMinutes($service->duration)->lte($w['end'])) {
+            $slotStart = $timeCursor->copy();
+            $slotEnd = $timeCursor->copy()->addMinutes($service->duration);
+
+            $conflictsBooking = $bookings->first(fn($booking) => $slotStart->lt($booking['end']) && $slotEnd->gt($booking['start']));
+
+            // Blocked by override?
+            $conflictsOverride = $blocking->first(fn($blocking) => $slotStart->lt($blocking['end']) && $slotEnd->gt($blocking['start']));
+
+            if (!$conflictsBooking && !$conflictsOverride && $slotStart->isFuture()) {
+                $slots->push([
+                    'start_at' => $slotStart->clone()->setTimezone($viewerTimezone)->toIso8601String(),
+                    'end_at' => $slotEnd->clone()->setTimezone($viewerTimezone)->toIso8601String(),
+                    'date' => $slotStart->clone()->setTimezone($viewerTimezone)->toDateString(),
+                ]);
+            }
+
+            $timeCursor->addMinutes($service->duration);
+        }
+    }
+}
