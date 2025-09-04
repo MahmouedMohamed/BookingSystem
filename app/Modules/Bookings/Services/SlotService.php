@@ -7,16 +7,18 @@ use App\Modules\Availabilities\Models\AvailabilityOverride;
 use App\Modules\Bookings\Interfaces\SlotServiceInterface;
 use App\Modules\Bookings\Models\Booking;
 use App\Modules\Bookings\Exceptions\InvalidServiceException;
+use App\Traits\CacheHelper;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Carbon\CarbonTimeZone;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Ramsey\Uuid\Uuid;
 
 class SlotService implements SlotServiceInterface
 {
+    use CacheHelper;
+
     public function __construct() {}
 
     public function index($request, $provider, $service): Collection
@@ -41,12 +43,19 @@ class SlotService implements SlotServiceInterface
         $days = 7; // Only Next Week
         $to = (clone $from)->addDays($days - 1)->endOfDay();
 
+        $cacheKey = 'slots_provider_' . $provider->id .
+            '_service_' . $service->id .
+            '_from_' . $from->toDateString() .
+            '_timezone_' . Auth::user()->timezone;
+
+        $ttl = 7 * 60 * 60;
+
+        // Track key manually for database cache
+        $this->trackSlotCacheKey($provider->id, $service->id, $cacheKey, $ttl);
+
         return Cache::remember(
-            'slots_provider_' . $provider->id .
-                '_service_' . $service->id .
-                '_from_' . $from->toDateString() .
-                '_timezone_' . Auth::user()->timezone,
-            7 * 60 * 60,
+            $cacheKey,
+            $ttl,
             function () use ($provider, $service, $providerTimezone, $viewerTimezone, $from, $to) {
                 $availabilities = Availability::where('provider_id', $provider->id)
                     ->get(['weekday', 'start', 'end'])
