@@ -1,0 +1,90 @@
+name: Workflow
+
+on:
+  workflow_dispatch:
+  push:
+    branches-ignore:
+      - 'dependabot/npm_and_yarn/*'
+
+concurrency:
+  group: "${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  Pint:
+    runs-on: ubuntu-latest
+    if: (github.ref == 'refs/heads/main')
+    permissions:
+      contents: write
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 50
+          lfs: true
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, redis, memcached
+          tools: composer:v2
+          coverage: none
+
+      - name: Cache Composer Dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('**/composer.lock') }}
+
+      - name: Install Project Dependencies
+        run: composer install --prefer-dist --no-ansi --no-interaction --no-progress
+
+      - name: Launch Pint inspection
+        run: php ./vendor/bin/pint
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: PHP Linting (Pint)
+          skip_fetch: true
+
+  Test:
+    runs-on: ubuntu-latest
+    if: (github.ref == 'refs/heads/main')
+    permissions:
+      contents: write
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 50
+          lfs: true
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, redis, memcached
+          tools: composer:v2
+          coverage: none
+
+      - name: Cache Composer Dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('**/composer.lock') }}
+
+      - name: Install Dependencies
+        run: composer install --prefer-dist --no-ansi --no-interaction --no-progress
+
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - name: Generate Key
+        run: php artisan key:generate
+
+      - name: Run Tests
+        run: php artisan test
