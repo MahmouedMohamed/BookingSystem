@@ -6,7 +6,6 @@ use App\Modules\Availabilities\Interfaces\AvailabilityOverrideRepositoryInterfac
 use App\Modules\Availabilities\Models\AvailabilityOverride;
 use App\Traits\TimeHelper;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Carbon;
 
 class AvailabilityOverrideRepository implements AvailabilityOverrideRepositoryInterface
 {
@@ -30,7 +29,7 @@ class AvailabilityOverrideRepository implements AvailabilityOverrideRepositoryIn
 
         $data['provider_id'] = $provider->id;
 
-        if(isset($data['weekday']) && isset($data['date_start'])) {
+        if (isset($data['weekday']) && isset($data['date_start'])) {
             $data['date'] = $this->calculateNextWeekday($data['date_start'], $data['weekday']);
         } else {
             $data['weekday'] = $this->getWeekDay($data['date']);
@@ -43,7 +42,7 @@ class AvailabilityOverrideRepository implements AvailabilityOverrideRepositoryIn
     {
         $data = $request->validated();
 
-        if(isset($data['weekday']) && isset($data['date_start'])) {
+        if (isset($data['weekday']) && isset($data['date_start'])) {
             $data['date'] = $this->calculateNextWeekday($data['date_start'], $data['weekday']);
         } else {
             $data['weekday'] = $this->getWeekDay($data['date']);

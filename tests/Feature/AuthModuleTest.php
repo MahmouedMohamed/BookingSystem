@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Hash;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-
 class AuthModuleTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
@@ -29,13 +28,13 @@ class AuthModuleTest extends TestCase
                 'message',
                 'items' => [
                     'user' => ['id', 'name', 'email', 'timezone'],
-                    'token'
-                ]
+                    'token',
+                ],
             ]);
 
         $this->assertDatabaseHas('users', [
             'email' => 'customer@test.com',
-            'name' => 'Test Customer'
+            'name' => 'Test Customer',
         ]);
     }
 
@@ -54,13 +53,13 @@ class AuthModuleTest extends TestCase
                 'message',
                 'items' => [
                     'user' => ['id', 'name', 'email', 'timezone'],
-                    'token'
-                ]
+                    'token',
+                ],
             ]);
 
         $this->assertDatabaseHas('users', [
             'email' => 'provider@test.com',
-            'name' => 'Test Provider'
+            'name' => 'Test Provider',
         ]);
     }
 
@@ -71,12 +70,12 @@ class AuthModuleTest extends TestCase
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => Hash::make('password'),
-            'role' => 'customer'
+            'role' => 'customer',
         ]);
 
         $response = $this->postJson('/api/auth/login', [
             'email' => 'test@example.com',
-            'password' => 'password'
+            'password' => 'password',
         ]);
 
         $response->assertStatus(200)
@@ -84,8 +83,8 @@ class AuthModuleTest extends TestCase
                 'message',
                 'item' => [
                     'user' => ['id', 'name', 'email', 'timezone'],
-                    'token'
-                ]
+                    'token',
+                ],
             ]);
     }
 
@@ -96,17 +95,17 @@ class AuthModuleTest extends TestCase
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => Hash::make('password'),
-            'role' => 'customer'
+            'role' => 'customer',
         ]);
 
         $this->postJson('/api/auth/login', [
             'email' => 'nonexistent@example.com',
-            'password' => 'wrongpassword'
+            'password' => 'wrongpassword',
         ])->assertStatus(404);
 
         $this->postJson('/api/auth/login', [
             'email' => 'test@example.com',
-            'password' => 'wrongpassword'
+            'password' => 'wrongpassword',
         ])->assertStatus(401);
     }
 }

@@ -14,17 +14,17 @@ class ServiceRepository implements ServiceRepositoryInterface
     public function index($request, $with = []): LengthAwarePaginator
     {
         $query = Service::with($with)
-        ->when(Auth::user()->role == 'customer', function ($query){
-            return $query->published();
-        })->when(Auth::user()->role == 'provider', function ($query){
-            return $query->provider(Auth::user()->id);
-        })->when($request->has('search'), function ($query) use ($request) {
-            return $query->search($request->get('search'));
-        })->when($request->with_trashed, function ($query){
-            return $query->withTrashed();
-        })->when(Auth::user()->role == 'admin' && $request->provider_id, function ($query) use ($request) {
-            return $query->provider($request->provider_id);
-        });
+            ->when(Auth::user()->role == 'customer', function ($query) {
+                return $query->published();
+            })->when(Auth::user()->role == 'provider', function ($query) {
+                return $query->provider(Auth::user()->id);
+            })->when($request->has('search'), function ($query) use ($request) {
+                return $query->search($request->get('search'));
+            })->when($request->with_trashed, function ($query) {
+                return $query->withTrashed();
+            })->when(Auth::user()->role == 'admin' && $request->provider_id, function ($query) use ($request) {
+                return $query->provider($request->provider_id);
+            });
 
         // Sort functionality
         $sortBy = $request->get('sort_by', 'created_at');

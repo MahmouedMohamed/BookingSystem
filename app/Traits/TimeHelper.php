@@ -41,6 +41,7 @@ trait TimeHelper
     {
         $sign = $offset >= 0 ? '+' : '-';
         $hours = abs($offset);
+
         return sprintf('%s%02d:00', $sign, $hours);
     }
 }

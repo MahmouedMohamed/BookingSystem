@@ -38,7 +38,7 @@ class UpdateUserRequest extends FormRequest
             'name' => 'sometimes|required|string|max:255',
             'password' => 'sometimes|required|string|min:8|max:255',
             'role' => 'sometimes|string|in:admin,provider,customer',
-            'timezone' => 'sometimes|numeric|min:-12|max:12'
+            'timezone' => 'sometimes|numeric|min:-12|max:12',
         ];
     }
 }

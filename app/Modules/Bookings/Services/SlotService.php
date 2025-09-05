@@ -4,15 +4,14 @@ namespace App\Modules\Bookings\Services;
 
 use App\Modules\Availabilities\Models\Availability;
 use App\Modules\Availabilities\Models\AvailabilityOverride;
+use App\Modules\Bookings\Exceptions\InvalidServiceException;
 use App\Modules\Bookings\Interfaces\SlotServiceInterface;
 use App\Modules\Bookings\Models\Booking;
-use App\Modules\Bookings\Exceptions\InvalidServiceException;
 use App\Traits\CacheHelper;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Carbon\CarbonTimeZone;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class SlotService implements SlotServiceInterface
@@ -23,8 +22,8 @@ class SlotService implements SlotServiceInterface
 
     public function index($provider, $service, $viewerTimezone): Collection
     {
-        if (!$service->is_published || $service->provider_id !== $provider->id) {
-            throw new InvalidServiceException();
+        if (! $service->is_published || $service->provider_id !== $provider->id) {
+            throw new InvalidServiceException;
         }
 
         $providerTimezone = CarbonTimeZone::create($provider->timezone);
@@ -43,10 +42,10 @@ class SlotService implements SlotServiceInterface
         $days = 7; // Only Next Week
         $to = (clone $from)->addDays($days - 1)->endOfDay();
 
-        $cacheKey = 'slots_provider_' . $provider->id .
-            '_service_' . $service->id .
-            '_from_' . $from->toDateString() .
-            '_timezone_' . $viewerTimezone;
+        $cacheKey = 'slots_provider_'.$provider->id.
+            '_service_'.$service->id.
+            '_from_'.$from->toDateString().
+            '_timezone_'.$viewerTimezone;
 
         $ttl = 7 * 60 * 60;
 
@@ -73,7 +72,7 @@ class SlotService implements SlotServiceInterface
                     ->whereBetween('start_date', [$from, $to])
                     ->whereIn('status', ['PENDING', 'CONFIRMED'])
                     ->get(['start_date', 'end_date'])
-                    ->map(fn($booking) => [
+                    ->map(fn ($booking) => [
                         'start' => Carbon::parse($booking->start_date)->setTimezone($providerTimezone),
                         'end' => Carbon::parse($booking->end_date)->setTimezone($providerTimezone),
                     ]);
@@ -85,9 +84,9 @@ class SlotService implements SlotServiceInterface
                     $dateKey = $day->toDateString();
 
                     $availabilitiesDays = $availabilities->get($weekday, collect())
-                        ->map(fn($r) => [
-                            'start' => Carbon::parse($dateKey . ' ' . $r->start, $providerTimezone),
-                            'end' => Carbon::parse($dateKey . ' ' . $r->end, $providerTimezone),
+                        ->map(fn ($r) => [
+                            'start' => Carbon::parse($dateKey.' '.$r->start, $providerTimezone),
+                            'end' => Carbon::parse($dateKey.' '.$r->end, $providerTimezone),
                         ])
                         ->values();
 
@@ -114,8 +113,8 @@ class SlotService implements SlotServiceInterface
             $dateKey = $date->copy()->toDateString();
             $availabilitiesOverridesWithRecursive->push([
                 'date' => $dateKey,
-                'start' => Carbon::parse($dateKey . ' ' . $availabilityOverride->start, $providerTimezone),
-                'end' => Carbon::parse($dateKey . ' ' . $availabilityOverride->end, $providerTimezone),
+                'start' => Carbon::parse($dateKey.' '.$availabilityOverride->start, $providerTimezone),
+                'end' => Carbon::parse($dateKey.' '.$availabilityOverride->end, $providerTimezone),
             ]);
             if ($availabilityOverride->recurring) {
                 for ($index = 0; $index < $availabilityOverride->number_of_recurring; $index++) {
@@ -126,8 +125,8 @@ class SlotService implements SlotServiceInterface
                         $dateKey = $occurrence->toDateString();
                         $availabilitiesOverridesWithRecursive->push([
                             'date' => $dateKey,
-                            'start' => Carbon::parse($dateKey . ' ' . $availabilityOverride->start, $providerTimezone),
-                            'end' => Carbon::parse($dateKey . ' ' . $availabilityOverride->end, $providerTimezone),
+                            'start' => Carbon::parse($dateKey.' '.$availabilityOverride->start, $providerTimezone),
+                            'end' => Carbon::parse($dateKey.' '.$availabilityOverride->end, $providerTimezone),
                         ]);
                     }
                 }
@@ -143,14 +142,14 @@ class SlotService implements SlotServiceInterface
             $slotStart = $timeCursor->copy();
             $slotEnd = $timeCursor->copy()->addMinutes($service->duration);
 
-            $conflictsBooking = $bookings->first(fn($booking) => $slotStart->lt($booking['end']) && $slotEnd->gt($booking['start']));
+            $conflictsBooking = $bookings->first(fn ($booking) => $slotStart->lt($booking['end']) && $slotEnd->gt($booking['start']));
 
             // Blocked by override?
-            $conflictsOverride = $blocking->first(fn($blocking) => $slotStart->lt($blocking['end']) && $slotEnd->gt($blocking['start']));
+            $conflictsOverride = $blocking->first(fn ($blocking) => $slotStart->lt($blocking['end']) && $slotEnd->gt($blocking['start']));
 
             $nowInViewerTz = Carbon::now($viewerTimezone);
 
-            if (!$conflictsBooking && !$conflictsOverride && $slotStart->copy()->setTimezone($viewerTimezone)->gte($nowInViewerTz)) {
+            if (! $conflictsBooking && ! $conflictsOverride && $slotStart->copy()->setTimezone($viewerTimezone)->gte($nowInViewerTz)) {
                 $slots->push([
                     'start_at' => $slotStart->clone()->setTimezone($viewerTimezone)->toIso8601String(),
                     'end_at' => $slotEnd->clone()->setTimezone($viewerTimezone)->toIso8601String(),
@@ -161,7 +160,7 @@ class SlotService implements SlotServiceInterface
             } else {
                 if (isset($conflictsBooking)) {
                     $timeCursor = Carbon::parse($conflictsBooking['end'])->copy();
-                } else if (isset($conflictsOverride)) {
+                } elseif (isset($conflictsOverride)) {
                     $timeCursor = Carbon::parse($conflictsOverride['end'])->copy();
                 } else {
                     $timeCursor->addMinutes($service->duration);

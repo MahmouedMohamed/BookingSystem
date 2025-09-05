@@ -22,7 +22,9 @@ class SlotServiceTest extends TestCase
     use RefreshDatabase, WithFaker;
 
     protected SlotServiceInterface $slotService;
+
     protected User $provider;
+
     protected Service $service;
 
     protected function setUp(): void

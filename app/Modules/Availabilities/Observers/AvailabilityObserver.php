@@ -4,7 +4,6 @@ namespace App\Modules\Availabilities\Observers;
 
 use App\Modules\Availabilities\Models\Availability;
 use App\Traits\CacheHelper;
-use Illuminate\Support\Facades\Cache;
 
 class AvailabilityObserver
 {

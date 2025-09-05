@@ -30,7 +30,7 @@ class CleanBookingsCommand extends Command
         Booking::where('end_date', '<', Carbon::now())
             ->where('status', '=', 'CONFIRMED')
             ->update([
-                'status' => 'COMPLETED'
+                'status' => 'COMPLETED',
             ]);
 
         Booking::where('end_date', '<', Carbon::now())

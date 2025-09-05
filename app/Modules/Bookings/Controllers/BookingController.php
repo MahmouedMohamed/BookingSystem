@@ -8,7 +8,6 @@ use App\Modules\Bookings\Exceptions\BookingException;
 use App\Modules\Bookings\Interfaces\BookingServiceInterface;
 use App\Modules\Bookings\Models\Booking;
 use App\Modules\Bookings\Requests\StoreBookingRequest;
-use App\Modules\Bookings\Requests\UpdateBookingRequest;
 use App\Modules\Bookings\Resources\BookingCollectionResource;
 use App\Modules\Bookings\Resources\BookingResource;
 use App\Traits\ApiResponse;
@@ -94,7 +93,7 @@ class BookingController extends Controller
             return $this->sendSuccessResponse('Booking restored successfully', [], 'item');
         } catch (ModelNotFoundException $e) {
             throw $e;
-        }catch (AuthorizationException $e) {
+        } catch (AuthorizationException $e) {
             throw $e;
         } catch (Exception $e) {
             return $this->sendErrorResponse('Failed to restored booking: '.$e->getMessage());

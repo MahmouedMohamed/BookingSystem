@@ -29,7 +29,7 @@ class AnalyticsController extends Controller
 
             return $this->sendSuccessResponse('Analytics retrieved successfully', new AnalyticsCollectionResource($analytics));
         } catch (Exception $e) {
-            return $this->sendErrorResponse('Failed to retrieve analytics: ' . $e->getMessage());
+            return $this->sendErrorResponse('Failed to retrieve analytics: '.$e->getMessage());
         }
     }
 
@@ -40,7 +40,7 @@ class AnalyticsController extends Controller
 
             return $this->sendSuccessResponse('Analytics retrieved successfully', new AnalyticsCollectionResource($analytics));
         } catch (Exception $e) {
-            return $this->sendErrorResponse('Failed to retrieve analytics: ' . $e->getMessage());
+            return $this->sendErrorResponse('Failed to retrieve analytics: '.$e->getMessage());
         }
     }
 
@@ -51,7 +51,7 @@ class AnalyticsController extends Controller
 
             return $this->sendSuccessResponse('Analytics retrieved successfully', $analytics);
         } catch (Exception $e) {
-            return $this->sendErrorResponse('Failed to retrieve analytics: ' . $e->getMessage());
+            return $this->sendErrorResponse('Failed to retrieve analytics: '.$e->getMessage());
         }
     }
 
@@ -62,7 +62,7 @@ class AnalyticsController extends Controller
 
             return $this->sendSuccessResponse('Analytics retrieved successfully', new AnalyticsCollectionResource($analytics));
         } catch (Exception $e) {
-            return $this->sendErrorResponse('Failed to retrieve analytics: ' . $e->getMessage());
+            return $this->sendErrorResponse('Failed to retrieve analytics: '.$e->getMessage());
         }
     }
 }

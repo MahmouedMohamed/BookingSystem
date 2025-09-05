@@ -56,7 +56,7 @@ class StoreServiceRequest extends FormRequest
     protected function getProvider(): ?User
     {
         return User::where('id', $this->input('provider_id'))
-                ->where('role', 'provider')
-                ->first();
+            ->where('role', 'provider')
+            ->first();
     }
 }

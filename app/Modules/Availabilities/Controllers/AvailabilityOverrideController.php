@@ -21,7 +21,6 @@ class AvailabilityOverrideController extends Controller
 
     public function __construct(private AvailabilityOverrideServiceInterface $availabilityOverrideService) {}
 
-
     public function index(Request $request, User $provider)
     {
         try {
@@ -30,9 +29,9 @@ class AvailabilityOverrideController extends Controller
             $availabilitiesOverrides = $this->availabilityOverrideService->index($request, $provider);
 
             return $this->sendSuccessResponse('AvailabilitiesOverrides retrieved successfully', new AvailabilityOverrideCollectionResource($availabilitiesOverrides));
-        } catch(AuthorizationException $e){
+        } catch (AuthorizationException $e) {
             throw $e;
-        }catch (Exception $e) {
+        } catch (Exception $e) {
             return $this->sendErrorResponse('Failed to retrieve availabilitiesOverrides: '.$e->getMessage());
         }
     }

@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
+use App\Modules\Analytics\Providers\AnalyticsServiceProvider;
 use App\Modules\Availabilities\Providers\AvailabilityServiceProvider;
 use App\Modules\Bookings\Providers\BookingServiceProvider;
-use App\Modules\Analytics\Providers\AnalyticsServiceProvider;
 use App\Modules\Services\Providers\CategoryServiceProvider;
 use App\Modules\Services\Providers\ServiceProvider;
 use App\Modules\Users\Providers\UserServiceProvider;

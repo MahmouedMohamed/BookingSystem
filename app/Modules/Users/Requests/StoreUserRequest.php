@@ -11,6 +11,7 @@ use Illuminate\Validation\Rule;
 class StoreUserRequest extends FormRequest
 {
     use AuthorizesRequests;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -36,7 +37,7 @@ class StoreUserRequest extends FormRequest
             ],
             'password' => 'required|string|min:8|max:255',
             'role' => 'required|string|in:admin,provider,customer',
-            'timezone' => 'sometimes|numeric|min:-12|max:12'
+            'timezone' => 'sometimes|numeric|min:-12|max:12',
         ];
     }
 }

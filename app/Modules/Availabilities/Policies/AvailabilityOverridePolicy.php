@@ -43,8 +43,6 @@ class AvailabilityOverridePolicy
         return $user->id === $availabilityOverride->provider_id;
     }
 
-    /**
-     */
     public function delete(User $user, AvailabilityOverride $availabilityOverride): bool
     {
         if ($user->role === 'admin') {

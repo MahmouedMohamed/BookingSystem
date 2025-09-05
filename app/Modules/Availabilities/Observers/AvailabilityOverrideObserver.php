@@ -4,7 +4,6 @@ namespace App\Modules\Availabilities\Observers;
 
 use App\Modules\Availabilities\Models\AvailabilityOverride;
 use App\Traits\CacheHelper;
-use Illuminate\Support\Facades\Cache;
 
 class AvailabilityOverrideObserver
 {

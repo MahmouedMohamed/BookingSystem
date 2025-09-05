@@ -5,9 +5,7 @@ namespace Database\Seeders;
 use App\Modules\Services\Models\Category;
 use App\Modules\Services\Models\Service;
 use App\Modules\Users\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class ServicesSeeder extends Seeder
 {

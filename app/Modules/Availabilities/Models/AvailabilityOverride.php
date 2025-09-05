@@ -49,7 +49,7 @@ class AvailabilityOverride extends Model
     protected function casts(): array
     {
         return [
-            'date' => 'date'
+            'date' => 'date',
         ];
     }
 

@@ -34,7 +34,7 @@ class UpdateAvailabilityRequest extends FormRequest
                 'max:6',
                 Rule::unique('provider_availabilities')
                     ->where('provider_id', $provider->id)
-                    ->ignore($availability->id)
+                    ->ignore($availability->id),
             ],
             'start' => 'required|date_format:H:i',
             'end' => 'required|date_format:H:i|after:start',

@@ -17,7 +17,7 @@ class AvailabilityOverrideResource extends JsonResource
         return [
             'id' => $this->id,
             'date' => $this->date?->format('Y-m-d'),
-            'weekday' => $this->when($this->weekday != null, __('app.weekdays.'. $this->weekday), null),
+            'weekday' => $this->when($this->weekday != null, __('app.weekdays.'.$this->weekday), null),
             'start' => $this->start,
             'end' => $this->end,
             'recurring' => $this->recurring,

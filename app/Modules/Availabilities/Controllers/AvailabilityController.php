@@ -5,11 +5,11 @@ namespace App\Modules\Availabilities\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Availabilities\Interfaces\AvailabilityServiceInterface;
 use App\Modules\Availabilities\Models\Availability;
-use App\Modules\Users\Models\User;
-use App\Modules\Availabilities\Resources\AvailabilityCollectionResource;
-use App\Modules\Availabilities\Resources\AvailabilityResource;
 use App\Modules\Availabilities\Requests\StoreAvailabilityRequest;
 use App\Modules\Availabilities\Requests\UpdateAvailabilityRequest;
+use App\Modules\Availabilities\Resources\AvailabilityCollectionResource;
+use App\Modules\Availabilities\Resources\AvailabilityResource;
+use App\Modules\Users\Models\User;
 use App\Traits\ApiResponse;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -29,9 +29,9 @@ class AvailabilityController extends Controller
             $availabilities = $this->availabilityService->index($request, $provider);
 
             return $this->sendSuccessResponse('Availabilities retrieved successfully', new AvailabilityCollectionResource($availabilities));
-        } catch(AuthorizationException $e){
+        } catch (AuthorizationException $e) {
             throw $e;
-        }catch (Exception $e) {
+        } catch (Exception $e) {
             return $this->sendErrorResponse('Failed to retrieve availabilities: '.$e->getMessage());
         }
     }

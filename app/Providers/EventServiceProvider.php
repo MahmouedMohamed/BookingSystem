@@ -15,7 +15,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         BookingCreated::class => [
-            SendBookingConfirmation::class
+            SendBookingConfirmation::class,
         ],
     ];
 

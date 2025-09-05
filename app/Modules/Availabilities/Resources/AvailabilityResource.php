@@ -16,7 +16,7 @@ class AvailabilityResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'weekday' => __('app.weekdays.'. $this->weekday),
+            'weekday' => __('app.weekdays.'.$this->weekday),
             'start' => $this->start,
             'end' => $this->end,
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),

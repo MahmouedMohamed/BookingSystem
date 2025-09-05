@@ -32,6 +32,7 @@ class BookingAnalyticsRepository implements BookingAnalyticsRepositoryInterface
     {
         $query = Booking::query();
         $this->applyFilters($query, $request, Auth::user()->timezone);
+
         return $query
             ->selectRaw('provider_id, COUNT(*) as total')
             ->groupBy('provider_id')
@@ -42,6 +43,7 @@ class BookingAnalyticsRepository implements BookingAnalyticsRepositoryInterface
     {
         $query = Booking::query();
         $this->applyFilters($query, $request, Auth::user()->timezone);
+
         return $query
             ->selectRaw("
                 service_id,
@@ -62,17 +64,17 @@ class BookingAnalyticsRepository implements BookingAnalyticsRepositoryInterface
         $startOfWeek = Carbon::now($viewerTimezone)->startOfDay();
         $endOfWeek = Carbon::now($viewerTimezone)->addDays(6)->endOfDay();
 
-        if (!$request->date_from && !$request->date_to) {
+        if (! $request->date_from && ! $request->date_to) {
             $request->merge([
                 'date_start' => $startOfWeek,
-                'date_to' => $endOfWeek
+                'date_to' => $endOfWeek,
             ]);
         } else {
             $dateStart = Carbon::parse($request->date_from, $viewerTimezone)->startOfDay();
             $dateEnd = (clone $dateStart)->addDays(6)->endOfDay();
             $request->merge([
                 'date_start' => $dateStart,
-                'date_to' => $dateEnd
+                'date_to' => $dateEnd,
             ]);
         }
 
@@ -118,6 +120,7 @@ class BookingAnalyticsRepository implements BookingAnalyticsRepositoryInterface
     {
         $query = Booking::query();
         $this->applyFilters($query, $request, Auth::user()->timezone);
+
         return $query
             ->selectRaw('customer_id, AVG(TIMESTAMPDIFF(MINUTE, start_date, end_date)) as avg_duration')
             ->groupBy('customer_id')

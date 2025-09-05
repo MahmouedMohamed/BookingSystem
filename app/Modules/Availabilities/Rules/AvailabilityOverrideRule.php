@@ -13,10 +13,15 @@ class AvailabilityOverrideRule implements ValidationRule
     use TimeHelper;
 
     protected int $providerId;
+
     protected ?int $weekday;
+
     protected ?string $dateStart;
+
     protected string $start;
+
     protected string $end;
+
     protected string $type;
 
     public function __construct(int $providerId, ?int $weekday, ?string $dateStart, string $start, string $end, string $type)
@@ -37,11 +42,11 @@ class AvailabilityOverrideRule implements ValidationRule
             $date = null;
         }
 
-        if (!$date && $this->weekday !== null && $this->dateStart) {
+        if (! $date && $this->weekday !== null && $this->dateStart) {
             $date = $this->calculateNextWeekday($this->dateStart, $this->weekday);
         }
 
-        if (!$date) {
+        if (! $date) {
             return;
         }
 
@@ -52,21 +57,22 @@ class AvailabilityOverrideRule implements ValidationRule
             ->get();
 
         if ($availabilities->isEmpty()) {
-            $fail("Provider has no availability on this date/weekday to block.");
+            $fail('Provider has no availability on this date/weekday to block.');
+
             return;
         }
 
         $withinAvailabilities = $availabilities->contains(function ($availability) use ($date) {
-            $availabilityStart = Carbon::parse($date->toDateString() . ' ' . $availability->start);
-            $availabilityEnd = Carbon::parse($date->toDateString() . ' ' . $availability->end);
+            $availabilityStart = Carbon::parse($date->toDateString().' '.$availability->start);
+            $availabilityEnd = Carbon::parse($date->toDateString().' '.$availability->end);
 
-            $currentStart = Carbon::parse($date->toDateString() . ' ' . $this->start);
-            $currentEnd = Carbon::parse($date->toDateString() . ' ' . $this->end);
+            $currentStart = Carbon::parse($date->toDateString().' '.$this->start);
+            $currentEnd = Carbon::parse($date->toDateString().' '.$this->end);
 
             return $currentStart->gte($availabilityStart) && $currentEnd->lte($availabilityEnd);
         });
 
-        if (!$withinAvailabilities) {
+        if (! $withinAvailabilities) {
             $fail("Override {$this->start}-{$this->end} must fall within provider availability on {$date->toDateString()}.");
         }
     }

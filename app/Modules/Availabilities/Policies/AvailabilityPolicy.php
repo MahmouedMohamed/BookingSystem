@@ -43,8 +43,6 @@ class AvailabilityPolicy
         return $user->id === $availability->provider_id;
     }
 
-    /**
-     */
     public function delete(User $user, Availability $availability): bool
     {
         if ($user->role === 'admin') {

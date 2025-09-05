@@ -5,14 +5,10 @@ namespace Database\Seeders;
 use App\Modules\Availabilities\Models\Availability;
 use App\Modules\Bookings\Interfaces\SlotServiceInterface;
 use App\Modules\Bookings\Models\Booking;
-use App\Modules\Services\Models\Category;
 use App\Modules\Services\Models\Service;
 use App\Modules\Users\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class BookingsSeeder extends Seeder
 {

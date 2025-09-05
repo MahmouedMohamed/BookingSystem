@@ -15,8 +15,11 @@ use Illuminate\Support\Facades\DB;
 class BookingRepository implements BookingRepositoryInterface
 {
     const STATUS_PENDING = 'PENDING';
+
     const STATUS_CONFIRMED = 'CONFIRMED';
+
     const STATUS_CANCELLED = 'CANCELLED';
+
     const STATUS_COMPLETED = 'COMPLETED';
 
     const TRANSACTIONS = [
@@ -37,7 +40,7 @@ class BookingRepository implements BookingRepositoryInterface
             'customer',
             'service.provider',
             'service.category',
-            'cancelledBy'
+            'cancelledBy',
         ])->when(Auth::user()->role == 'admin', function ($query) use ($request) {
             if ($request->get('provider_id')) {
                 $query->provider($request->get('provider_id'));
@@ -80,7 +83,7 @@ class BookingRepository implements BookingRepositoryInterface
             ->where('end_at', $viewerEnd->toIso8601String())
             ->first();
 
-        if (!$slots || !$pickedSlot) {
+        if (! $slots || ! $pickedSlot) {
             throw new BookingException('There\'s no slots at this time', 422);
         }
 
@@ -117,6 +120,7 @@ class BookingRepository implements BookingRepositoryInterface
                 'status' => 'PENDING',
             ]);
             DB::commit();
+
             return $booking;
         } catch (Exception $ex) {
             DB::rollBack();
@@ -140,7 +144,7 @@ class BookingRepository implements BookingRepositoryInterface
         if (Carbon::parse($booking->start_date)->isPast()) {
             throw new BookingException('Can\'t change status for past booking', 403);
         }
-        if (!$this->canTransitionTo($newStatus, $booking->status)) {
+        if (! $this->canTransitionTo($newStatus, $booking->status)) {
             throw new BookingException('Can\'t change status for booking', 403);
         }
         $data = ['status' => $newStatus];

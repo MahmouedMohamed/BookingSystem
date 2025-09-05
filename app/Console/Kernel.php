@@ -24,9 +24,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-            $schedule->command('app:clean-bookings')
-                ->everyMinute()
-                ->withoutOverlapping();
+        $schedule->command('app:clean-bookings')
+            ->everyMinute()
+            ->withoutOverlapping();
     }
 
     /**

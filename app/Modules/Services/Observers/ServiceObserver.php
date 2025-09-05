@@ -9,6 +9,7 @@ use App\Traits\CacheHelper;
 class ServiceObserver
 {
     use CacheHelper;
+
     /**
      * Handle the Service "updated" event.
      */
@@ -25,8 +26,8 @@ class ServiceObserver
      */
     public function deleted(Service $service): void
     {
-            $this->invalidateProviderSlots($service->provider_id);
-            InvalidateBookingsJob::dispatch($service);
+        $this->invalidateProviderSlots($service->provider_id);
+        InvalidateBookingsJob::dispatch($service);
     }
 
     /**
@@ -34,6 +35,6 @@ class ServiceObserver
      */
     public function forceDeleted(Service $service): void
     {
-            $this->invalidateProviderSlots($service->provider_id);
+        $this->invalidateProviderSlots($service->provider_id);
     }
 }

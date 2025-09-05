@@ -28,9 +28,9 @@ class UserController extends Controller
             $users = $this->userService->index($request);
 
             return $this->sendSuccessResponse('Users retrieved successfully', new UserCollectionResource($users));
-        } catch(AuthorizationException $e){
+        } catch (AuthorizationException $e) {
             throw $e;
-        }catch (Exception $e) {
+        } catch (Exception $e) {
             return $this->sendErrorResponse('Failed to retrieve users: '.$e->getMessage());
         }
     }

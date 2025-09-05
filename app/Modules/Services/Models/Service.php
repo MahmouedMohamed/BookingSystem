@@ -28,7 +28,7 @@ class Service extends Model
         'category_id',
         'duration',
         'price',
-        'is_published'
+        'is_published',
     ];
 
     public function resolveRouteBinding($value, $field = null)

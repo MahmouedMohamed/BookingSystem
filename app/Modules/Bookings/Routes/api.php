@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('providers/{provider}/services/{service}/slots', [SlotController::class, 'index']);
-    Route::group(['middleware' => 'throttle:bookings'], function(){
+    Route::group(['middleware' => 'throttle:bookings'], function () {
         Route::apiResource('bookings', BookingController::class)->except(['show', 'update']);
         Route::group(['prefix' => 'bookings'], function () {
             Route::patch('/{booking}/restore', [BookingController::class, 'restore']);

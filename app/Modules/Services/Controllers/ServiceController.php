@@ -100,7 +100,7 @@ class ServiceController extends Controller
             return $this->sendSuccessResponse('Service restored successfully', [], 'item');
         } catch (ModelNotFoundException $e) {
             throw $e;
-        }catch (AuthorizationException $e) {
+        } catch (AuthorizationException $e) {
             throw $e;
         } catch (Exception $e) {
             return $this->sendErrorResponse('Failed to restored service: '.$e->getMessage());

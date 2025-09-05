@@ -13,9 +13,13 @@ class AvailabilityOverrideConflict implements ValidationRule
     use TimeHelper;
 
     protected int $providerId;
+
     protected ?int $ignoreId;
+
     protected string $type;
+
     protected string $start;
+
     protected string $end;
 
     public function __construct(int $providerId, string $type, string $start, string $end, ?int $ignoreId = null)
@@ -30,7 +34,7 @@ class AvailabilityOverrideConflict implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $query = AvailabilityOverride::where('provider_id', $this->providerId)
-            ->when($this->ignoreId, fn($q) => $q->where('id', '!=', $this->ignoreId))
+            ->when($this->ignoreId, fn ($q) => $q->where('id', '!=', $this->ignoreId))
             ->where('start', '<', $this->end)
             ->where('end', '>', $this->start);
 
@@ -45,7 +49,7 @@ class AvailabilityOverrideConflict implements ValidationRule
                     ->orWhere(function ($sub) use ($targetDate) {
                         $sub->where('recurring', true)
                             ->whereDate('date', '<=', $targetDate)
-                            ->whereRaw("DATE_ADD(date, INTERVAL (number_of_recurring - 1) WEEK) >= ?", [$targetDate]);
+                            ->whereRaw('DATE_ADD(date, INTERVAL (number_of_recurring - 1) WEEK) >= ?', [$targetDate]);
                     });
             });
         } else {
@@ -67,7 +71,7 @@ class AvailabilityOverrideConflict implements ValidationRule
                             ->orWhere(function ($sub) use ($targetDate, $dateEnd) {
                                 $sub->where('recurring', true)
                                     ->where('date', '<=', $dateEnd)
-                                    ->whereRaw("DATE_ADD(date, INTERVAL (number_of_recurring - 1) WEEK) >= ?", [$targetDate]);
+                                    ->whereRaw('DATE_ADD(date, INTERVAL (number_of_recurring - 1) WEEK) >= ?', [$targetDate]);
                             });
                     });
                 } else {
@@ -79,7 +83,7 @@ class AvailabilityOverrideConflict implements ValidationRule
         }
 
         if ($query->exists()) {
-            $fail("An override already exists that conflicts");
+            $fail('An override already exists that conflicts');
         }
     }
 }

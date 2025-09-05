@@ -47,12 +47,12 @@ Else If I want to override weekday then I can specify if it's gonna be repeated 
                     $this->input('end'),
                     'date',
                 ),
-                new AvailabilityOverrideConflict($provider->id, 'date', $this->input('start'), $this->input('end'), $availabilityOverride->id)
+                new AvailabilityOverrideConflict($provider->id, 'date', $this->input('start'), $this->input('end'), $availabilityOverride->id),
             ],
             // Sunday => 0 ... Saturday => 6
             'weekday' => [
                 'sometimes',
-            'nullable',
+                'nullable',
                 'required_without:date',
                 'integer',
                 'min:0',
@@ -65,7 +65,7 @@ Else If I want to override weekday then I can specify if it's gonna be repeated 
                     $this->input('end'),
                     'weekday',
                 ),
-                new AvailabilityOverrideConflict($provider->id, 'weekday', $this->input('start'), $this->input('end'), $availabilityOverride->id)
+                new AvailabilityOverrideConflict($provider->id, 'weekday', $this->input('start'), $this->input('end'), $availabilityOverride->id),
             ],
             'date_start' => 'required_with:weekday|nullable|date|after_or_equal:today',
             'start' => 'required|date_format:H:i',
@@ -79,7 +79,7 @@ Else If I want to override weekday then I can specify if it's gonna be repeated 
                 'max:52',
                 Rule::requiredIf(function () {
                     return $this->input('recurring', false) === true;
-                })
+                }),
             ],
         ];
     }

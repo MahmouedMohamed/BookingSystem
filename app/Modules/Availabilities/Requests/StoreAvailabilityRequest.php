@@ -32,7 +32,7 @@ class StoreAvailabilityRequest extends FormRequest
                 'min:0',
                 'max:6',
                 Rule::unique('provider_availabilities')
-                    ->where('provider_id', $provider->id)
+                    ->where('provider_id', $provider->id),
             ],
             'start' => 'required|date_format:H:i',
             'end' => 'required|date_format:H:i|after:start',

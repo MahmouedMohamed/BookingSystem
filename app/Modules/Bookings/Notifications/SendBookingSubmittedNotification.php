@@ -3,11 +3,11 @@
 namespace App\Modules\Bookings\Notifications;
 
 use App\Modules\Bookings\Models\Booking;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Broadcasting\PrivateChannel;
 
 class SendBookingSubmittedNotification extends Notification implements ShouldBroadcast, ShouldQueue
 {
@@ -24,7 +24,7 @@ class SendBookingSubmittedNotification extends Notification implements ShouldBro
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('booking.' . $this->booking->service->provider->id),
+            new PrivateChannel('booking.'.$this->booking->service->provider->id),
         ];
     }
 

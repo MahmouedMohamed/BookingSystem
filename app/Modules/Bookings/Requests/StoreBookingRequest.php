@@ -23,6 +23,7 @@ class StoreBookingRequest extends FormRequest
     public function rules(): array
     {
         $creatorTimezone = Auth::user()->timezone;
+
         return [
             'customer_id' => [
                 'sometimes',
@@ -42,7 +43,7 @@ class StoreBookingRequest extends FormRequest
                     if ($start->isPast()) {
                         $fail('The start date must be in the future in your timezone.');
                     }
-                }
+                },
             ],
             'end_date' => [
                 'required',
@@ -53,8 +54,8 @@ class StoreBookingRequest extends FormRequest
                     if ($end->lte($start)) {
                         $fail('End date must be after start date in your timezone.');
                     }
-                }
-            ]
+                },
+            ],
         ];
     }
 }

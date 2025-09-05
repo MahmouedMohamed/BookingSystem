@@ -35,7 +35,7 @@ class SendBookingConfirmationEmail extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $confirmationUrl = env('APP_URL') . "/api/bookings/{$this->booking->id}/confirm";
+        $confirmationUrl = env('APP_URL')."/api/bookings/{$this->booking->id}/confirm";
 
         return (new MailMessage)
             ->subject('Booking Submitted Successfully')
