@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 /**
  * @OA\PathItem(path="/api")
+ *
  * @OA\Info(
  *     version="1.0.0",
  *     title="My Laravel API",
