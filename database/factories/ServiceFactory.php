@@ -29,11 +29,11 @@ class ServiceFactory extends Factory
     public function definition(): array
     {
         return [
-            'provider_id' => User::factory(),
-            'name' => fake()->name(),
-            'description' => fake()->text(),
+            'provider_id' => User::factory()->state(['role' => 'provider']),
             'category_id' => Category::factory(),
-            'duration' => fake()->numberBetween(1, 720), // From minute to 12 hours
+            'name' => fake()->name(),
+            'description' => fake()->sentence(),
+            'duration' => fake()->randomElement([30, 45, 60, 90, 120]),
             'price' => fake()->randomFloat(2, 1, 500),
             'is_published' => fake()->boolean(),
         ];

@@ -19,25 +19,11 @@ class ServicesSeeder extends Seeder
         $providers = User::where('role', 'provider')->get();
         $categories = Category::all();
 
-        // Define services for each category
-        $categoryServices = [
-            'Items Care' => ['Laundry', 'Cleaning', 'Ironing'],
-            'Personal Care' => ['Shaving', 'Haircut', 'Massage']
-        ];
-
         foreach ($providers as $provider) {
-            foreach ($categories as $category) {
-                if (isset($categoryServices[$category->name])) {
-                    foreach ($categoryServices[$category->name] as $serviceName) {
-                        Service::factory()->create([
-                            'name' => $serviceName,
-                            'category_id' => $category->id,
-                            'provider_id' => $provider->id,
-                            'description' => Str::ucfirst($serviceName) . ' service',
-                        ]);
-                    }
-                }
-            }
+            Service::factory()->count(5)->create([
+                'provider_id' => $provider->id,
+                'category_id' => $categories->random()->id,
+            ]);
         }
     }
 }

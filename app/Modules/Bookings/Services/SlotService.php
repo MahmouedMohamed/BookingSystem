@@ -21,14 +21,14 @@ class SlotService implements SlotServiceInterface
 
     public function __construct() {}
 
-    public function index($provider, $service): Collection
+    public function index($provider, $service, $viewerTimezone): Collection
     {
         if (!$service->is_published || $service->provider_id !== $provider->id) {
             throw new InvalidServiceException();
         }
 
-        $providerTimezone = CarbonTimeZone::create($provider->timezone ?? config('app.timezone', 'UTC'));
-        $viewerTimezone = CarbonTimeZone::createFromHourOffset(Auth::user()->timezone);
+        $providerTimezone = CarbonTimeZone::create($provider->timezone);
+        $viewerTimezone = CarbonTimeZone::createFromHourOffset($viewerTimezone);
 
         $viewerDateStart = Carbon::now()->timezone($viewerTimezone);
 
@@ -46,7 +46,7 @@ class SlotService implements SlotServiceInterface
         $cacheKey = 'slots_provider_' . $provider->id .
             '_service_' . $service->id .
             '_from_' . $from->toDateString() .
-            '_timezone_' . Auth::user()->timezone;
+            '_timezone_' . $viewerTimezone;
 
         $ttl = 7 * 60 * 60;
 

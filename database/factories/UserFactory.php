@@ -37,17 +37,29 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'role' => fake()->randomElement(['admin', 'provider', 'customer']),
             'password' => static::$password ??= Hash::make('password'),
+            'timezone' => fake()->numberBetween(-12, 12),
             'remember_token' => Str::random(10),
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
+    public function admin(): Factory
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
+        return $this->state(fn () => [
+            'role' => 'admin',
+        ]);
+    }
+
+    public function provider(): Factory
+    {
+        return $this->state(fn () => [
+            'role' => 'provider',
+        ]);
+    }
+
+    public function customer(): Factory
+    {
+        return $this->state(fn () => [
+            'role' => 'customer',
         ]);
     }
 }

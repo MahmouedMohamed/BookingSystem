@@ -55,7 +55,7 @@ class SlotServiceTest extends TestCase
 
         $this->expectException(InvalidServiceException::class);
 
-        $this->slotService->index($this->provider, $this->service);
+        $this->slotService->index($this->provider, $this->service, Auth::user()->timezone);
     }
 
     #[Test]
@@ -68,7 +68,7 @@ class SlotServiceTest extends TestCase
             'end' => '12:00:00',
         ]);
 
-        $slots = $this->slotService->index($this->provider, $this->service);
+        $slots = $this->slotService->index($this->provider, $this->service, Auth::user()->timezone);
 
         $this->assertNotEmpty($slots);
         $this->assertEquals('2025-09-05', $slots->keys()->first());
@@ -93,7 +93,7 @@ class SlotServiceTest extends TestCase
             'status' => 'CONFIRMED',
         ]);
 
-        $slots = $this->slotService->index($this->provider, $this->service);
+        $slots = $this->slotService->index($this->provider, $this->service, Auth::user()->timezone);
 
         $firstSlot = $slots->first()->first();
         $this->assertStringContainsString('10:00', $firstSlot['start_at']);
@@ -118,7 +118,7 @@ class SlotServiceTest extends TestCase
             'number_of_recurring' => 0,
         ]);
 
-        $slots = $this->slotService->index($this->provider, $this->service);
+        $slots = $this->slotService->index($this->provider, $this->service, Auth::user()->timezone);
 
         $firstSlot = $slots->first()->first();
         $this->assertStringContainsString('10:00', $firstSlot['start_at']);

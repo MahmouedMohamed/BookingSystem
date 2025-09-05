@@ -9,6 +9,7 @@ use App\Modules\Bookings\Models\Booking;
 use App\Modules\Services\Interfaces\ServiceInterface;
 use App\Modules\Users\Interfaces\UserServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 
 class BookingService implements BookingServiceInterface
 {
@@ -31,7 +32,7 @@ class BookingService implements BookingServiceInterface
     public function store($request): Booking
     {
         $service = $this->service->find($request->input('service_id'));
-        $slots = $this->slotService->index($service->provider, $service);
+        $slots = $this->slotService->index($service->provider, $service, Auth::user()->timezone);
         return $this->bookingRepository->store($request, $service, $slots);
     }
 

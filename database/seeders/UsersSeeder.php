@@ -15,14 +15,17 @@ class UsersSeeder extends Seeder
      */
     public function run(): void
     {
-        $roles = ['admin', 'provider', 'customer'];
-        foreach ($roles as $key => $role) {
-            User::factory()->create([
-                'name' => Str::ucfirst($role). ' User',
-                'email' => $role.'@booking-system.com',
-                'password' => Hash::make('12345678'),
-                'role' => $role
-            ]);
-        }
+        // Create 1 admin
+        User::factory()->admin()->create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('12345678'),
+        ]);
+
+        // Create 5 providers
+        User::factory()->provider()->count(5)->create();
+
+        // Create 20 customers
+        User::factory()->customer()->count(20)->create();
     }
 }

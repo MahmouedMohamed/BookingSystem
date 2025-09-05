@@ -11,16 +11,18 @@ use Illuminate\Support\Str;
 
 class CategoriesSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $categories = ['Items Care', 'Personal Care'];
-        foreach ($categories as $key => $category) {
-            Category::factory()->create([
-                'name' => Str::ucfirst($category),
-            ]);
+        $fixedCategories = [
+            'Hair & Beauty',
+            'Health & Wellness',
+            'Fitness',
+            'Education',
+            'Consulting',
+        ];
+
+        foreach ($fixedCategories as $category) {
+            Category::firstOrCreate(['name' => $category]);
         }
     }
 }

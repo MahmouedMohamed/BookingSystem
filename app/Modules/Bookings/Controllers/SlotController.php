@@ -11,6 +11,7 @@ use App\Modules\Users\Models\User;
 use App\Traits\ApiResponse;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SlotController extends Controller
 {
@@ -21,7 +22,7 @@ class SlotController extends Controller
     public function index(Request $request, User $provider, Service $service)
     {
         try {
-            $slots = $this->slotServiceInterface->index($provider, $service);
+            $slots = $this->slotServiceInterface->index($provider, $service, Auth::user()->timezone);
 
             return $this->sendSuccessResponse('Slots retrieved successfully', $slots);
         } catch (InvalidServiceException $e) {

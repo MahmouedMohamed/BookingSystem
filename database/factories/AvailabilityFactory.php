@@ -27,9 +27,9 @@ class AvailabilityFactory extends Factory
     {
         return [
             'provider_id' => User::factory(),
-            'weekday' => fake()->numberBetween(1, 7),
-            'start' => '08:00:00',
-            'end' => '17:00:00',
+            'weekday' => fake()->numberBetween(0, 6), // 0=Sunday, 6=Saturday
+            'start' => fake()->randomElement(['09:00:00', '10:00:00', '11:00:00']),
+            'end'   => fake()->randomElement(['17:00:00', '18:00:00']),
         ];
     }
 }
