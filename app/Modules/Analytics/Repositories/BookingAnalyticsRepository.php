@@ -6,6 +6,7 @@ use App\Modules\Analytics\Interfaces\BookingAnalyticsRepositoryInterface;
 use App\Modules\Bookings\Models\Booking;
 use App\Traits\TimeHelper;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,35 +29,45 @@ class BookingAnalyticsRepository implements BookingAnalyticsRepositoryInterface
             });
     }
 
-    public function totalBookings($request): LengthAwarePaginator
+    public function totalBookings($request, $withPagination = true, $timezone = null): LengthAwarePaginator|Builder
     {
         $query = Booking::query();
-        $this->applyFilters($query, $request, Auth::user()->timezone);
+        $this->applyFilters($query, $request, $timezone ?? Auth::user()->timezone);
 
-        return $query
+        $query = $query
             ->selectRaw('provider_id, COUNT(*) as total')
-            ->groupBy('provider_id')
-            ->paginate($request->get('per_page', 15));
+            ->groupBy('provider_id');
+
+        if ($withPagination) {
+            return $query->paginate($request->get('per_page', 15));
+        }
+
+        return $query;
     }
 
-    public function bookingsRate($request): LengthAwarePaginator
+    public function bookingsRate($request, $withPagination = true, $timezone = null): LengthAwarePaginator|Builder
     {
         $query = Booking::query();
-        $this->applyFilters($query, $request, Auth::user()->timezone);
+        $this->applyFilters($query, $request, $timezone ?? Auth::user()->timezone);
 
-        return $query
+        $query = $query
             ->selectRaw("
                 service_id,
                 SUM(status = 'CONFIRMED') as confirmed_count,
                 SUM(status = 'CANCELLED') as cancelled_count
             ")
-            ->groupBy('service_id')
-            ->paginate($request->get('per_page', 15));
+            ->groupBy('service_id');
+
+        if ($withPagination) {
+            return $query->paginate($request->get('per_page', 15));
+        }
+
+        return $query;
     }
 
-    public function peakHours($request): array
+    public function peakHours($request, $timezone = null): array
     {
-        $viewerTimezone = Auth::user()->timezone;
+        $viewerTimezone = $timezone ?? Auth::user()->timezone;
         $mysqlTimezone = $this->getMySQLTimezoneString($viewerTimezone);
 
         $query = Booking::query();
@@ -116,14 +127,20 @@ class BookingAnalyticsRepository implements BookingAnalyticsRepositoryInterface
         return $peaks;
     }
 
-    public function averageBookingsDuration($request): LengthAwarePaginator
+    public function averageBookingsDuration($request, $withPagination = true, $timezone = null): LengthAwarePaginator|Builder
     {
         $query = Booking::query();
-        $this->applyFilters($query, $request, Auth::user()->timezone);
+        $this->applyFilters($query, $request, $timezone ?? Auth::user()->timezone);
 
-        return $query
+        $query = $query
             ->selectRaw('customer_id, AVG(TIMESTAMPDIFF(MINUTE, start_date, end_date)) as avg_duration')
-            ->groupBy('customer_id')
-            ->paginate($request->get('per_page', 15));
+            ->groupBy('customer_id');
+
+        if ($withPagination) {
+            return $query
+                ->paginate($request->get('per_page', 15));
+        }
+
+        return $query;
     }
 }
