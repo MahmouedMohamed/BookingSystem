@@ -52,25 +52,66 @@ class BookingAnalyticsRepository implements BookingAnalyticsRepositoryInterface
             ->paginate($request->get('per_page', 15));
     }
 
-    public function peakHours($request): LengthAwarePaginator
+    public function peakHours($request): array
     {
         $viewerTimezone = Auth::user()->timezone;
         $mysqlTimezone = $this->getMySQLTimezoneString($viewerTimezone);
+
         $query = Booking::query();
+
+        $startOfWeek = Carbon::now($viewerTimezone)->startOfDay();
+        $endOfWeek = Carbon::now($viewerTimezone)->addDays(6)->endOfDay();
+
+        if (!$request->date_from && !$request->date_to) {
+            $request->merge([
+                'date_start' => $startOfWeek,
+                'date_to' => $endOfWeek
+            ]);
+        } else {
+            $dateStart = Carbon::parse($request->date_from, $viewerTimezone)->startOfDay();
+            $dateEnd = (clone $dateStart)->addDays(6)->endOfDay();
+            $request->merge([
+                'date_start' => $dateStart,
+                'date_to' => $dateEnd
+            ]);
+        }
+
         $this->applyFilters($query, $request, $viewerTimezone);
 
-        return $query
+        $results = $query
             ->whereIn('status', ['CONFIRMED', 'COMPLETED'])
             ->selectRaw(
                 'DAYNAME(CONVERT_TZ(start_date, "+00:00", ?)) as day_name,
-                DAY(CONVERT_TZ(start_date, "+00:00", ?)) as day,
                 HOUR(CONVERT_TZ(start_date, "+00:00", ?)) as hour,
                 COUNT(*) as booking_count',
-                [$mysqlTimezone, $mysqlTimezone, $mysqlTimezone]
+                [$mysqlTimezone, $mysqlTimezone]
             )
-            ->groupBy('day', 'day_name', 'hour')
-            ->orderBy('booking_count', 'desc')
-            ->paginate($request->get('per_page', 15));
+            ->groupBy('day_name', 'hour')
+            ->get();
+
+        $daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+        $peaks = [];
+        foreach ($daysOfWeek as $day) {
+            $dayResults = $results->where('day_name', $day);
+
+            if ($dayResults->isNotEmpty()) {
+                $peak = $dayResults->sortByDesc('booking_count')->first();
+                $peaks[] = [
+                    'day_name' => $day,
+                    'hour' => $peak->hour,
+                    'booking_count' => $peak->booking_count,
+                ];
+            } else {
+                $peaks[] = [
+                    'day_name' => $day,
+                    'hour' => null,
+                    'booking_count' => 0,
+                ];
+            }
+        }
+
+        return $peaks;
     }
 
     public function averageBookingsDuration($request): LengthAwarePaginator

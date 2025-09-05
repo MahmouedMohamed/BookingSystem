@@ -38,7 +38,7 @@ class AnalyticsController extends Controller
         try {
             $analytics = $this->analyticsServiceInterface->bookingsRate($request);
 
-            return $this->sendSuccessResponse('Analytics retrieved successfully', $analytics);
+            return $this->sendSuccessResponse('Analytics retrieved successfully', new AnalyticsCollectionResource($analytics));
         } catch (Exception $e) {
             return $this->sendErrorResponse('Failed to retrieve analytics: ' . $e->getMessage());
         }
@@ -60,7 +60,7 @@ class AnalyticsController extends Controller
         try {
             $analytics = $this->analyticsServiceInterface->averageBookingsDuration($request);
 
-            return $this->sendSuccessResponse('Analytics retrieved successfully', $analytics);
+            return $this->sendSuccessResponse('Analytics retrieved successfully', new AnalyticsCollectionResource($analytics));
         } catch (Exception $e) {
             return $this->sendErrorResponse('Failed to retrieve analytics: ' . $e->getMessage());
         }

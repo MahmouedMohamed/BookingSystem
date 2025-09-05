@@ -10,7 +10,7 @@ interface BookingAnalyticsRepositoryInterface
 
     public function bookingsRate($request): LengthAwarePaginator;
 
-    public function peakHours($request): LengthAwarePaginator;
+    public function peakHours($request): array;
 
     public function averageBookingsDuration($request): LengthAwarePaginator;
 }

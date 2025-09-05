@@ -20,7 +20,7 @@ class AnalyticsService implements AnalyticsServiceInterface
         return $this->bookingAnalyticsRepositoryInterface->bookingsRate($request);
     }
 
-    public function peakHours($request): LengthAwarePaginator
+    public function peakHours($request): array
     {
         return $this->bookingAnalyticsRepositoryInterface->peakHours($request);
     }
