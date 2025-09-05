@@ -12,11 +12,10 @@ This is a Laravel-based web application.
 ## Installation
 
 1. **composer install**  
-2. **npm install**  
-3. **php artisan storage:link**
-4. **php artisan queue:work** 
 
-This used for sending emails, notifications (I use mailtrap and it's installed in .env so no worries about sending real emails, Also I use my own pusher app installed in .env also) when creating bookings from seeders
+2. **npm install**  
+
+3. **php artisan storage:link**
 
 4. **php artisan migrate**  
 
@@ -26,7 +25,11 @@ This to auto clean bookings
 
 6. **php artisan db:seed**  
 
-7. **php artisan serve**
+7. **php artisan queue:work** 
+
+This used for sending emails, notifications (I use mailtrap and it's installed in .env so no worries about sending real emails, Also I use my own pusher app installed in .env also) when creating bookings from seeders
+
+8. **php artisan serve**
 
 
 ## Auth Step
